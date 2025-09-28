@@ -1,7 +1,5 @@
 { config, pkgs, ... }:
-let 
-   command = "bin/nbfc_service --config-file '/home/sachin/.config/nbfc/nbfc.json'";
-in
+
 {
 	imports = [
 		/etc/nixos/hardware-configuration.nix
@@ -11,7 +9,6 @@ in
 	boot.loader.systemd-boot.enable = true;
 	boot.loader.efi.canTouchEfiVariables = true;
 	boot.loader.systemd-boot.configurationLimit = 7;
-	# boot.kernelModules = [ "rtw89_8852be" ];
 
 	# CPU & GPU Drivers
 	hardware.cpu.amd.updateMicrocode = true;
@@ -33,6 +30,7 @@ in
 	hardware.nvidia.prime = {
 		offload.enable = true;
 		offload.enableOffloadCmd = true;
+		# sync.enable = true;
 		amdgpuBusId = "PCI:6:0:0";
 		nvidiaBusId = "PCI:1:0:0";
 	};
@@ -69,22 +67,35 @@ in
 		LC_TIME = "en_US.UTF-8";
 	};
 
-	# Define a user account. Don't forget to set a password with ‘passwd’.
+	# Define a user account
 	users.users.sachin = {
 		isNormalUser = true;
 		description = "Sachin Adinath Hole";
-		extraGroups = [ "networkmanager" "wheel" ];
+		extraGroups = [ "networkmanager" "wheel" "docker" ];
 		packages = with pkgs; [];
 	};
 
 	xdg.portal.enable = true;
-	xdg.portal.config.common.default = "gtk";
-	xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
+	xdg.portal.config.common.default = "hyprland";
+	xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
 
+	environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+	services.displayManager = {
+		sddm.enable = true;
+		sddm.wayland.enable = true;
+		sddm.theme = "${pkgs.sddm-chili-theme}/share/sddm/themes/chili";
+	}; 
+
+	programs.hyprland = {
+		enable = true;
+		withUWSM = true;
+		xwayland.enable = true;
+	};
 
 	# xorg
 	services.xserver.enable = true;
-	services.xserver.displayManager.lightdm.enable = true;
+	# services.xserver.displayManager.lightdm.enable = true;
 	services.xserver.windowManager.bspwm.enable = true;
 	services.xserver.videoDrivers = [
 		"amdgpu"
@@ -119,6 +130,9 @@ in
 		nerd-fonts.monaspace
 	];
 
+	# Docker
+	virtualisation.docker.enable = true;
+
 	# Install Programs
 	programs.firefox.enable = true;
 
@@ -140,16 +154,27 @@ in
 		curl
 		dconf
 		nbfc-linux
+		# home-manager
 	];
 
+	# NBFC Config
+	environment.etc."nbfc/nbfc.json".text = builtins.toJSON {
+		SelectedConfigId = "HP Victus 15-fb0xxx";
+	};
+
+	# Enable NBFC
 	systemd.services.nbfc_service = {
 		enable = true;
 		description = "Fan Controll HP Victus 15-fb0xxx";
 		serviceConfig.Type = "simple";
 		path = [pkgs.kmod];
-		script = "${pkgs.nbfc-linux}/${command}";
+		# script = "${pkgs.nbfc-linux}/bin/nbfc_service --config-file /home/sachin/.config/nbfc/nbfc.json";
+		script = "${pkgs.nbfc-linux}/bin/nbfc_service --config-file /etc/nbfc/nbfc.json";
 		wantedBy = ["multi-user.target"];
 	};
+
+	# Tailscale
+	services.tailscale.enable = true;
 
 	# Enable touchpad support (enabled default in most desktopManager).
 	services.libinput.enable = true;

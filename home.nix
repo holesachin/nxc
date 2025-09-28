@@ -1,9 +1,10 @@
-{ config, pkgs, inputs, ... }:
+{config, pkgs, inputs, ... }:
 
 let 
 	dotfiles = "${config.home.homeDirectory}/dotfiles";
 	create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
 	configs = {
+		hypr = "hypr";
 		kitty = "kitty";
 		alacritty = "alacritty";
 		nvim = "nvim";
@@ -13,6 +14,7 @@ let
 		tmux = "tmux";
 		polybar = "polybar";
 		nbfc = "nbfc";
+		sxiv = "sxiv";
 		qutebrowser = "qutebrowser";
 	};
 in
@@ -28,12 +30,9 @@ in
 		enable = true;
 		shellAliases = {
 			vim = "nvim";
-			nxc-update = "sudo nixos-rebuild switch --impure --flake ~/nxc#nixos";
+			nixup = "sudo nixos-rebuild switch --impure --flake ~/nxc#nixos";
+			hmup = "home-manager switch --flake ~/nxc#sachin";
 		};
-	};
-
-	programs.zsh = {
-		enable = true;
 	};
 
 	programs.git = {
@@ -42,28 +41,23 @@ in
 		userEmail = "holesachin007@gmail.com";
 	};
 
-	programs.fzf.enableZshIntegration = true;
-
 	home.pointerCursor = {
 		gtk.enable = true;
-		# x11.enable = true;
+		x11.enable = true;
 		package = pkgs.bibata-cursors;
-		name = "Bibata-Modern-Classic";
+		name = "Bibata-Modern-Amber";
 		size = 16;
 	};
 
-	gtk.enable = true;
-	gtk.theme = {
-		package = pkgs.flat-remix-gtk;
-		name = "Flat-Remix-GTK-Grey-Darkest";
-	};
-	gtk.iconTheme = {
-		package = pkgs.adwaita-icon-theme;
-		name = "Adwaita";
-	};
-	gtk.font = {
-		name = "Sans";
-		size = 11;
+	gtk = {
+		enable = true;
+		theme.package = pkgs.flat-remix-gtk;
+		theme.name = "Flat-Remix-GTK-Grey-Darkest";
+
+		iconTheme.package = pkgs.papirus-icon-theme;
+		iconTheme.name = "Papirus";
+		font.name = "ShureTechMono Nerd Font Mono";
+		font.size = 11;
 	};
 
 	# links configs to ~/.config
@@ -76,8 +70,8 @@ in
 	home.packages = with pkgs; [
 		alacritty
 		kitty
-		bspwm
 		sxhkd
+		tmux
 		polybar
 		rofi
 		tmux
@@ -88,8 +82,14 @@ in
 		xorg.xrandr
 		xorg.xinit
 		xclip
+		sxiv
+		pcmanfm
+		swaybg
 		qutebrowser
 		fastfetch
+		nwg-displays
+		nwg-look
+		wlr-randr
 		nvtopPackages.full
 		networkmanagerapplet
 		inputs.zen-browser.packages.${pkgs.system}.default
