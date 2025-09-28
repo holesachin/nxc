@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
-
+let 
+   command = "bin/nbfc_service --config-file '/home/sachin/.config/nbfc/nbfc.json'";
+in
 {
 	imports = [
 		/etc/nixos/hardware-configuration.nix
@@ -8,19 +10,32 @@
 	# Bootloader.
 	boot.loader.systemd-boot.enable = true;
 	boot.loader.efi.canTouchEfiVariables = true;
-	boot.loader.systemd-boot.configurationLimit = 11;
+	boot.loader.systemd-boot.configurationLimit = 7;
+	# boot.kernelModules = [ "rtw89_8852be" ];
 
 	# CPU & GPU Drivers
 	hardware.cpu.amd.updateMicrocode = true;
 	hardware.graphics.enable = true;
 	hardware.graphics.enable32Bit = true;
-	hardware.nvidia.open = true;
-	hardware.nvidia.modesetting.enable = true;
-	hardware.nvidia.nvidiaSettings = true;
-	hardware.nvidia.prime.sync.enable = true;
-	hardware.nvidia.prime.nvidiaBusId = "PCI:1@0:0:0";
-	hardware.nvidia.prime.amdgpuBusId = "PCI:4@0:0:0";
-	hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
+
+	hardware.enableAllFirmware = true;
+	hardware.bluetooth.enable = true;
+
+	# Load NVIDIA proprietary drivers
+	hardware.nvidia = {
+		open = false;
+		modesetting.enable = true;
+		nvidiaSettings = true;
+		package = config.boot.kernelPackages.nvidiaPackages.stable;
+	};
+
+	# Hybrid GPU
+	hardware.nvidia.prime = {
+		offload.enable = true;
+		offload.enableOffloadCmd = true;
+		amdgpuBusId = "PCI:6:0:0";
+		nvidiaBusId = "PCI:1:0:0";
+	};
 
 	nix.optimise.automatic = true;
 	nix.optimise.dates = [ "weekly" ];
@@ -34,6 +49,7 @@
 
 	networking.hostName = "nixos";
 	networking.networkmanager.enable = true;
+	networking.networkmanager.wifi.powersave = true;
 
 	# Set your time zone.
 	time.timeZone = "Asia/Kolkata";
@@ -61,27 +77,17 @@
 		packages = with pkgs; [];
 	};
 
-	# hyprland
-	programs.hyprland = {
-		enable = true;
-		withUWSM = true;
-		xwayland.enable = true;
-	};
-
-	# niri
-	programs.niri.enable = true;
-
 	xdg.portal.enable = true;
-	xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
+	xdg.portal.config.common.default = "gtk";
+	xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
 
-	services.displayManager.sddm.enable = true;
-	services.displayManager.sddm.wayland.enable = true;
 
 	# xorg
 	services.xserver.enable = true;
+	services.xserver.displayManager.lightdm.enable = true;
 	services.xserver.windowManager.bspwm.enable = true;
 	services.xserver.videoDrivers = [
-		"modesetting"
+		"amdgpu"
 		"nvidia"
 	];
 
@@ -132,7 +138,18 @@
 		zip
 		unzip
 		curl
+		dconf
+		nbfc-linux
 	];
+
+	systemd.services.nbfc_service = {
+		enable = true;
+		description = "Fan Controll HP Victus 15-fb0xxx";
+		serviceConfig.Type = "simple";
+		path = [pkgs.kmod];
+		script = "${pkgs.nbfc-linux}/${command}";
+		wantedBy = ["multi-user.target"];
+	};
 
 	# Enable touchpad support (enabled default in most desktopManager).
 	services.libinput.enable = true;

@@ -1,10 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 let 
 	dotfiles = "${config.home.homeDirectory}/dotfiles";
 	create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
 	configs = {
-		hypr = "hypr";
 		kitty = "kitty";
 		alacritty = "alacritty";
 		nvim = "nvim";
@@ -13,6 +12,7 @@ let
 		rofi = "rofi";
 		tmux = "tmux";
 		polybar = "polybar";
+		nbfc = "nbfc";
 		qutebrowser = "qutebrowser";
 	};
 in
@@ -21,8 +21,8 @@ in
 
 	home.username = "sachin";
 	home.homeDirectory = "/home/sachin";
-	programs.git.enable = true;
 	home.stateVersion = "25.05";
+	programs.home-manager.enable = true;
 
 	programs.bash = {
 		enable = true;
@@ -34,14 +34,12 @@ in
 
 	programs.zsh = {
 		enable = true;
-		enableCompletion = true;
-		autosuggestion.enable = true;
-		syntaxHighlighting.enable = true;
-		shellAliases = {
-			vim = "nvim";
-			nxc-update = "sudo nixos-rebuild switch --impure --flake ~/nxc#nixos";
-		};
-		history.size = 10000;
+	};
+
+	programs.git = {
+		enable = true;
+		userName = "holesachin";
+		userEmail = "holesachin007@gmail.com";
 	};
 
 	programs.fzf.enableZshIntegration = true;
@@ -88,9 +86,14 @@ in
 		nil
 		nixpkgs-fmt
 		xorg.xrandr
+		xorg.xinit
 		xclip
 		qutebrowser
 		fastfetch
+		nvtopPackages.full
+		networkmanagerapplet
+		inputs.zen-browser.packages.${pkgs.system}.default
+		inputs.home-manager.packages.${pkgs.system}.home-manager
 	];
 
 }
