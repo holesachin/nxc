@@ -70,7 +70,7 @@
 	# Define a user account
 	users.users.sachin = {
 		isNormalUser = true;
-		description = "Sachin Adinath Hole";
+		description = ":) my nixos!";
 		extraGroups = [ "networkmanager" "wheel" "docker" ];
 		packages = with pkgs; [];
 	};
@@ -95,8 +95,13 @@
 
 	# xorg
 	services.xserver.enable = true;
-	# services.xserver.displayManager.lightdm.enable = true;
 	services.xserver.windowManager.bspwm.enable = true;
+	# services.xserver.windowManager.dwm = {
+	# 	enable = true;
+	# 	package = pkgs.dwm.overrideAttrs {
+	# 		src = "../dotfiles/dwm";
+	# 	};
+	# };
 	services.xserver.videoDrivers = [
 		"amdgpu"
 		"nvidia"
@@ -132,6 +137,10 @@
 
 	# Docker
 	virtualisation.docker.enable = true;
+	virtualisation.docker.rootless = {
+		enable = true;
+		setSocketVariable = true;
+	};
 
 	# Install Programs
 	programs.firefox.enable = true;
@@ -153,6 +162,7 @@
 		unzip
 		curl
 		dconf
+		gnumake
 		nbfc-linux
 		# home-manager
 	];

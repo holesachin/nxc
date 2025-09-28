@@ -74,8 +74,11 @@ in
 		tmux
 		polybar
 		rofi
+		dmenu
 		tmux
 		nodejs
+		yarn
+		pnpm
 		ripgrep
 		nil
 		nixpkgs-fmt
@@ -85,6 +88,7 @@ in
 		sxiv
 		pcmanfm
 		swaybg
+		obs-studio
 		qutebrowser
 		fastfetch
 		nwg-displays
