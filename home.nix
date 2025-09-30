@@ -1,4 +1,4 @@
-{config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, ... }:
 
 let 
 	dotfiles = "${config.home.homeDirectory}/dotfiles";
@@ -13,8 +13,13 @@ let
 		rofi = "rofi";
 		tmux = "tmux";
 		polybar = "polybar";
+		waybar = "waybar";
+		dunst = "dunst";
 		nbfc = "nbfc";
 		sxiv = "sxiv";
+		mpv = "mpv";
+		mpd = "mpd";
+		ncmpcpp = "ncmpcpp";
 		qutebrowser = "qutebrowser";
 	};
 in
@@ -46,7 +51,15 @@ in
 		x11.enable = true;
 		package = pkgs.bibata-cursors;
 		name = "Bibata-Modern-Amber";
-		size = 16;
+		size = 10;
+	};
+
+	programs.distrobox.enable = true;
+	programs.distrobox.containers = {
+		ubuntu = {
+			entry = true;
+			image = "ubuntu:latest";
+		};
 	};
 
 	gtk = {
@@ -66,10 +79,16 @@ in
 		recursive = true;
 	}) configs;
 
+	home.file = {
+		".zshrc".source = create_symlink "${dotfiles}/zsh/zshrc";
+		".config/user-dirs.dirs".source = create_symlink "${dotfiles}/xdg/user-dirs.dirs";
+	};
+
 	# install packages
 	home.packages = with pkgs; [
 		alacritty
 		kitty
+		bspwm
 		sxhkd
 		tmux
 		polybar
@@ -77,6 +96,9 @@ in
 		dmenu
 		tmux
 		nodejs
+		bun
+		go
+		gopls
 		yarn
 		pnpm
 		ripgrep
@@ -87,17 +109,27 @@ in
 		xclip
 		sxiv
 		pcmanfm
+		brightnessctl
+		pulsemixer
+		zed-editor
+		code-cursor
+		vscode
+		mpd
+		mpc
+		gimp3
+		ncmpcpp
+		mpv
 		swaybg
 		obs-studio
+		dunst
+		waybar
 		qutebrowser
 		fastfetch
 		nwg-displays
-		nwg-look
 		wlr-randr
 		nvtopPackages.full
 		networkmanagerapplet
 		inputs.zen-browser.packages.${pkgs.system}.default
-		inputs.home-manager.packages.${pkgs.system}.home-manager
 	];
 
 }

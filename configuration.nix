@@ -1,5 +1,7 @@
-{ config, pkgs, ... }:
-
+{ config, pkgs, ... }: 
+let
+	user = "sachin";
+in
 {
 	imports = [
 		/etc/nixos/hardware-configuration.nix
@@ -9,6 +11,7 @@
 	boot.loader.systemd-boot.enable = true;
 	boot.loader.efi.canTouchEfiVariables = true;
 	boot.loader.systemd-boot.configurationLimit = 7;
+	boot.kernelPackages = pkgs.linuxPackages_zen;
 
 	# CPU & GPU Drivers
 	hardware.cpu.amd.updateMicrocode = true;
@@ -28,9 +31,9 @@
 
 	# Hybrid GPU
 	hardware.nvidia.prime = {
-		offload.enable = true;
-		offload.enableOffloadCmd = true;
-		# sync.enable = true;
+		# offload.enable = true;
+		# offload.enableOffloadCmd = true;
+		sync.enable = true;
 		amdgpuBusId = "PCI:6:0:0";
 		nvidiaBusId = "PCI:1:0:0";
 	};
@@ -48,6 +51,7 @@
 	networking.hostName = "nixos";
 	networking.networkmanager.enable = true;
 	networking.networkmanager.wifi.powersave = true;
+	networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
 
 	# Set your time zone.
 	time.timeZone = "Asia/Kolkata";
@@ -70,10 +74,13 @@
 	# Define a user account
 	users.users.sachin = {
 		isNormalUser = true;
-		description = ":) my nixos!";
+		description = "my nixos!";
 		extraGroups = [ "networkmanager" "wheel" "docker" ];
+		shell = pkgs.zsh;
 		packages = with pkgs; [];
 	};
+
+	programs.zsh.enable = true;
 
 	xdg.portal.enable = true;
 	xdg.portal.config.common.default = "hyprland";
@@ -95,13 +102,12 @@
 
 	# xorg
 	services.xserver.enable = true;
-	services.xserver.windowManager.bspwm.enable = true;
-	# services.xserver.windowManager.dwm = {
-	# 	enable = true;
-	# 	package = pkgs.dwm.overrideAttrs {
-	# 		src = "../dotfiles/dwm";
-	# 	};
-	# };
+	services.xserver.windowManager.dwm = {
+		enable = true;
+		package = pkgs.dwm.overrideAttrs {
+			src = /home/${user}/dotfiles/dwm;
+		};
+	};
 	services.xserver.videoDrivers = [
 		"amdgpu"
 		"nvidia"
@@ -127,14 +133,6 @@
 		pulse.enable = true;
 	};
 
-	# fonts
-	fonts.packages = with pkgs; [
-		nerd-fonts.jetbrains-mono
-		nerd-fonts.shure-tech-mono
-		nerd-fonts.comic-shanns-mono
-		nerd-fonts.monaspace
-	];
-
 	# Docker
 	virtualisation.docker.enable = true;
 	virtualisation.docker.rootless = {
@@ -145,14 +143,27 @@
 	# Install Programs
 	programs.firefox.enable = true;
 
+	# Enable Appimage Support
+	programs.appimage.enable = true;
+	programs.appimage.binfmt = true;
+
 	# Allow unfree packages
 	nixpkgs.config.allowUnfree = true;
 
 	# Enable experimental features
 	nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+	# fonts
+	fonts.packages = with pkgs; [
+		nerd-fonts.jetbrains-mono
+		nerd-fonts.shure-tech-mono
+		nerd-fonts.comic-shanns-mono
+		nerd-fonts.monaspace
+	];
+
 	# List packages installed in system profile. To search, run:
 	environment.systemPackages = with pkgs; [
+		git
 		neovim
 		gcc
 		wget
@@ -164,7 +175,8 @@
 		dconf
 		gnumake
 		nbfc-linux
-		# home-manager
+		libsForQt5.qt5.qtgraphicaleffects
+		libsForQt5.qt5.qtquickcontrols
 	];
 
 	# NBFC Config
