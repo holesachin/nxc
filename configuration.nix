@@ -34,8 +34,8 @@ in
 		# offload.enable = true;
 		# offload.enableOffloadCmd = true;
 		sync.enable = true;
-		amdgpuBusId = "PCI:6:0:0";
-		nvidiaBusId = "PCI:1:0:0";
+		amdgpuBusId = "PCI:06:00:0";
+		nvidiaBusId = "PCI:01:00:0";
 	};
 
 	nix.optimise.automatic = true;
@@ -45,6 +45,33 @@ in
 		dates = "weekly";
 		options = "--delete-older-than 30d";
 	};
+
+	# Optimize Battery
+	# powerManagement = {
+	# 	enable = true;
+	# 	powertop.enable = true;
+	# };
+
+	services.tlp = {
+		enable = true;
+		settings = {
+			CPU_SCALING_GOVERNOR_ON_AC = "performance";
+			CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+			CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+			CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+			CPU_MIN_PERF_ON_AC = 0;
+			CPU_MAX_PERF_ON_AC = 100;
+			CPU_MIN_PERF_ON_BAT = 0;
+			CPU_MAX_PERF_ON_BAT = 20;
+			START_CHARGE_THRESH_BAT0 = 40; # 40 and below it starts to charge
+			STOP_CHARGE_THRESH_BAT0 = 90; # 80 and above it stops charging
+		};
+	};
+
+	programs.virt-manager.enable = true;
+	users.groups.libvirtd.members = [ "${user}" ];
+	virtualisation.libvirtd.enable = true;
+	virtualisation.spiceUSBRedirection.enable = true;
 
 	## ---
 
@@ -104,9 +131,10 @@ in
 	services.xserver.enable = true;
 	services.xserver.windowManager.dwm = {
 		enable = true;
-		package = pkgs.dwm.overrideAttrs {
-			src = /home/${user}/dotfiles/dwm;
-		};
+		package = pkgs.dwm.overrideAttrs (old: {
+			src = /home/${user}/dotfiles/chadwm;
+			buildInputs = (old.buildInputs or []) ++ [ pkgs.imlib2 ];
+		});
 	};
 	services.xserver.videoDrivers = [
 		"amdgpu"
@@ -143,6 +171,22 @@ in
 	# Install Programs
 	programs.firefox.enable = true;
 
+	# Polkit
+	security.polkit.enable = true;
+	systemd.user.services.polkit-gnome-authentication-agent-1 = {
+		description = "polkit-gnome-authentication-agent-1";
+		wantedBy = [ "graphical-session.target" ];
+		wants = [ "graphical-session.target" ];
+		after = [ "graphical-session.target" ];
+		serviceConfig = {
+			Type = "simple";
+			ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+			Restart = "on-failure";
+			RestartSec = 1;
+			TimeoutStopSec = 10;
+		};
+	};
+
 	# Enable Appimage Support
 	programs.appimage.enable = true;
 	programs.appimage.binfmt = true;
@@ -155,28 +199,32 @@ in
 
 	# fonts
 	fonts.packages = with pkgs; [
-		nerd-fonts.jetbrains-mono
-		nerd-fonts.shure-tech-mono
+		comic-mono
+		jetbrains-mono
 		nerd-fonts.comic-shanns-mono
+		nerd-fonts.jetbrains-mono
 		nerd-fonts.monaspace
+		nerd-fonts.shure-tech-mono
 	];
 
 	# List packages installed in system profile. To search, run:
 	environment.systemPackages = with pkgs; [
-		git
-		neovim
-		gcc
-		wget
-		htop
-		fzf
-		zip
-		unzip
 		curl
+		polkit_gnome
+		gparted
 		dconf
+		fzf
+		gcc
+		git
 		gnumake
-		nbfc-linux
+		htop
 		libsForQt5.qt5.qtgraphicaleffects
 		libsForQt5.qt5.qtquickcontrols
+		nbfc-linux
+		neovim
+		unzip
+		wget
+		zip
 	];
 
 	# NBFC Config

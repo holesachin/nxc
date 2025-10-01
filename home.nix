@@ -10,6 +10,8 @@ let
 		nvim = "nvim";
 		bspwm = "bspwm";
 		sxhkd = "sxhkd";
+		chadwm = "chadwm";
+		eww = "eww";
 		rofi = "rofi";
 		tmux = "tmux";
 		polybar = "polybar";
@@ -86,50 +88,55 @@ in
 
 	# install packages
 	home.packages = with pkgs; [
+		acpi
 		alacritty
-		kitty
+		brightnessctl
 		bspwm
-		sxhkd
-		tmux
-		polybar
-		rofi
-		dmenu
-		tmux
-		nodejs
 		bun
+		code-cursor
+		dash
+		dmenu
+		dunst
+		eww
+		fastfetch
+		feh
+		gimp3
 		go
 		gopls
-		yarn
-		pnpm
-		ripgrep
+		inputs.zen-browser.packages.${pkgs.system}.default
+		kitty
+		mpc
+		mpd
+		mpv
+		ncmpcpp
+		networkmanagerapplet
 		nil
 		nixpkgs-fmt
-		xorg.xrandr
-		xorg.xinit
-		xclip
-		sxiv
-		pcmanfm
-		brightnessctl
-		pulsemixer
-		zed-editor
-		code-cursor
-		vscode
-		mpd
-		mpc
-		gimp3
-		ncmpcpp
-		mpv
-		swaybg
-		obs-studio
-		dunst
-		waybar
-		qutebrowser
-		fastfetch
-		nwg-displays
-		wlr-randr
+		nodejs
 		nvtopPackages.full
-		networkmanagerapplet
-		inputs.zen-browser.packages.${pkgs.system}.default
+		nwg-displays
+		obs-studio
+		pcmanfm
+		picom
+		pnpm
+		polybar
+		pulsemixer
+		qutebrowser
+		ripgrep
+		rofi
+		swaybg
+		sxhkd
+		sxiv
+		tmux
+		tmux
+		vscode
+		waybar
+		wlr-randr
+		xclip
+		xorg.xinit
+		xorg.xrandr
+		yarn
+		zed-editor
 	];
 
 }
