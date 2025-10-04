@@ -4,25 +4,25 @@ let
 	dotfiles = "${config.home.homeDirectory}/dotfiles";
 	create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
 	configs = {
+		alacritty = "alacritty";
+		bspwm = "bspwm";
+		chadwm = "chadwm";
+		dunst = "dunst";
 		hypr = "hypr";
 		kitty = "kitty";
-		alacritty = "alacritty";
-		nvim = "nvim";
-		bspwm = "bspwm";
-		sxhkd = "sxhkd";
-		chadwm = "chadwm";
-		eww = "eww";
-		rofi = "rofi";
-		tmux = "tmux";
-		polybar = "polybar";
-		waybar = "waybar";
-		dunst = "dunst";
-		nbfc = "nbfc";
-		sxiv = "sxiv";
-		mpv = "mpv";
 		mpd = "mpd";
+		mpv = "mpv";
+		nbfc = "nbfc";
 		ncmpcpp = "ncmpcpp";
+		nvim = "nvim";
+		picom = "picom";
+		polybar = "polybar";
 		qutebrowser = "qutebrowser";
+		rofi = "rofi";
+		sxhkd = "sxhkd";
+		sxiv = "sxiv";
+		tmux = "tmux";
+		waybar = "waybar";
 	};
 in
 
@@ -57,12 +57,12 @@ in
 	};
 
 	programs.distrobox.enable = true;
-	programs.distrobox.containers = {
-		ubuntu = {
-			entry = true;
-			image = "ubuntu:latest";
-		};
-	};
+	# programs.distrobox.containers = {
+	# 	ubuntu = {
+	# 		entry = true;
+	# 		image = "ubuntu:latest";
+	# 	};
+	# };
 
 	gtk = {
 		enable = true;
@@ -83,6 +83,7 @@ in
 
 	home.file = {
 		".zshrc".source = create_symlink "${dotfiles}/zsh/zshrc";
+		".xinitrc".source = create_symlink "${dotfiles}/xorg/xinitrc";
 		".config/user-dirs.dirs".source = create_symlink "${dotfiles}/xdg/user-dirs.dirs";
 	};
 
@@ -103,12 +104,14 @@ in
 		gimp3
 		go
 		gopls
+		gparted
 		inputs.zen-browser.packages.${pkgs.system}.default
 		kitty
 		mpc
 		mpd
 		mpv
 		ncmpcpp
+		nautilus
 		networkmanagerapplet
 		nil
 		nixpkgs-fmt
@@ -118,10 +121,12 @@ in
 		obs-studio
 		pcmanfm
 		picom
+		pulsemixer
 		pnpm
 		polybar
 		pulsemixer
 		qutebrowser
+		rclone
 		ripgrep
 		rofi
 		swaybg

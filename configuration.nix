@@ -31,9 +31,9 @@ in
 
 	# Hybrid GPU
 	hardware.nvidia.prime = {
-		# offload.enable = true;
-		# offload.enableOffloadCmd = true;
-		sync.enable = true;
+		offload.enable = true;
+		offload.enableOffloadCmd = true;
+		# sync.enable = true;
 		amdgpuBusId = "PCI:06:00:0";
 		nvidiaBusId = "PCI:01:00:0";
 	};
@@ -46,27 +46,8 @@ in
 		options = "--delete-older-than 30d";
 	};
 
-	# Optimize Battery
-	# powerManagement = {
-	# 	enable = true;
-	# 	powertop.enable = true;
-	# };
-
-	services.tlp = {
-		enable = true;
-		settings = {
-			CPU_SCALING_GOVERNOR_ON_AC = "performance";
-			CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-			CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-			CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-			CPU_MIN_PERF_ON_AC = 0;
-			CPU_MAX_PERF_ON_AC = 100;
-			CPU_MIN_PERF_ON_BAT = 0;
-			CPU_MAX_PERF_ON_BAT = 20;
-			START_CHARGE_THRESH_BAT0 = 40; # 40 and below it starts to charge
-			STOP_CHARGE_THRESH_BAT0 = 90; # 80 and above it stops charging
-		};
-	};
+	services.thermald.enable = true;
+	services.auto-cpufreq.enable = true;
 
 	programs.virt-manager.enable = true;
 	users.groups.libvirtd.members = [ "${user}" ];
@@ -113,7 +94,9 @@ in
 	xdg.portal.config.common.default = "hyprland";
 	xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
 
-	environment.sessionVariables.NIXOS_OZONE_WL = "1";
+	environment.sessionVariables = { 
+		NIXOS_OZONE_WL = "1";
+	};
 
 	services.displayManager = {
 		sddm.enable = true;
@@ -127,28 +110,42 @@ in
 		xwayland.enable = true;
 	};
 
+	# enable greetd and auto login
+	# services.greetd.enable = true;
+	# services.greetd.settings = {
+	# 	default_session = {
+	# 		command = "${pkgs.greetd.greetd}/bin/agreety --cmd ${pkgs.bashInteractive}/bin/bash";
+	# 		user = "${user}";
+	# 	};
+	# 	initial_session = {
+	# 		command = "${pkgs.hyprland}/bin/Hyprland";
+	# 		user = "${user}";
+	# 	};
+	# };
+
 	# xorg
 	services.xserver.enable = true;
-	services.xserver.windowManager.dwm = {
-		enable = true;
-		package = pkgs.dwm.overrideAttrs (old: {
-			src = /home/${user}/dotfiles/chadwm;
-			buildInputs = (old.buildInputs or []) ++ [ pkgs.imlib2 ];
-		});
-	};
-	services.xserver.videoDrivers = [
-		"amdgpu"
-		"nvidia"
-	];
+	services.xserver.autorun = false;
+	# services.xserver.displayManager.startx.enable = true;
+	# services.xserver.windowManager.dwm = {
+	# 	enable = true;
+	# 	package = pkgs.dwm.overrideAttrs (old: {
+	# 		src = /home/${user}/dotfiles/dwm; # replace dwm with chadwm if you want
+	# 		buildInputs = (old.buildInputs or []) ++ [ pkgs.imlib2 ];
+	# 	});
+	# };
+
+	# services.xserver.windowManager.bspwm.enable = true;
+	# services.xserver.videoDrivers = [ 
+	# 	"nvidia"
+	# 	# "amdgpu"
+	# ];
 
 	# Configure keymap in X11
-	services.xserver.xkb = {
-		layout = "us";
-		variant = "";
-	};
-
-	# Enable CUPS to print documents.
-	# services.printing.enable = true;
+	# services.xserver.xkb = {
+	# 	layout = "us";
+	# 	variant = "";
+	# };
 
 	# Enable sound with pipewire.
 	services.pulseaudio.enable = false;
@@ -203,6 +200,7 @@ in
 		jetbrains-mono
 		nerd-fonts.comic-shanns-mono
 		nerd-fonts.jetbrains-mono
+		nerd-fonts.meslo-lg
 		nerd-fonts.monaspace
 		nerd-fonts.shure-tech-mono
 	];
@@ -210,18 +208,18 @@ in
 	# List packages installed in system profile. To search, run:
 	environment.systemPackages = with pkgs; [
 		curl
-		polkit_gnome
-		gparted
 		dconf
 		fzf
 		gcc
 		git
 		gnumake
+		greetd.qtgreet
 		htop
 		libsForQt5.qt5.qtgraphicaleffects
 		libsForQt5.qt5.qtquickcontrols
 		nbfc-linux
 		neovim
+		polkit_gnome
 		unzip
 		wget
 		zip
