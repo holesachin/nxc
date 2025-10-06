@@ -56,6 +56,21 @@ in
 		size = 10;
 	};
 
+	programs.obs-studio = {
+		enable = true;
+		package = ( pkgs.obs-studio.override {
+			cudaSupport = true;
+		});
+		plugins = with pkgs.obs-studio-plugins; [
+			wlrobs
+			obs-backgroundremoval
+			obs-pipewire-audio-capture
+			obs-vaapi #optional AMD hardware acceleration
+			obs-gstreamer
+			obs-vkcapture
+		];
+	};
+
 	programs.distrobox.enable = true;
 	# programs.distrobox.containers = {
 	# 	ubuntu = {
@@ -75,6 +90,15 @@ in
 		font.size = 11;
 	};
 
+	qt = {
+		enable = true;
+		platformTheme = "qtct";
+		style = {
+			package = pkgs.rose-pine-kvantum;
+			name = "kvantum";
+		};
+	};
+
 	# links configs to ~/.config
 	xdg.configFile = builtins.mapAttrs ( name: subpath: {
 		source = create_symlink "${dotfiles}/${subpath}";
@@ -92,54 +116,50 @@ in
 		acpi
 		alacritty
 		brightnessctl
-		bspwm
 		bun
+		cobra-cli
 		code-cursor
 		dash
-		dmenu
 		dunst
-		eww
 		fastfetch
-		feh
 		gimp3
 		go
 		gopls
 		gparted
 		inputs.zen-browser.packages.${pkgs.system}.default
 		kitty
+		lazygit
+		lazydocker
+		lazyjournal
+		libsForQt5.qt5ct
+		libsForQt5.qtstyleplugin-kvantum
 		mpc
 		mpd
 		mpv
-		ncmpcpp
 		nautilus
+		ncmpcpp
 		networkmanagerapplet
 		nil
 		nixpkgs-fmt
 		nodejs
 		nvtopPackages.full
 		nwg-displays
-		obs-studio
 		pcmanfm
-		picom
-		pulsemixer
 		pnpm
-		polybar
 		pulsemixer
+		python314
 		qutebrowser
 		rclone
 		ripgrep
-		rofi
+		rofi-wayland
+		sqlc
 		swaybg
-		sxhkd
 		sxiv
 		tmux
-		tmux
+		todoist
 		vscode
 		waybar
 		wlr-randr
-		xclip
-		xorg.xinit
-		xorg.xrandr
 		yarn
 		zed-editor
 	];
