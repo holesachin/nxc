@@ -22,18 +22,22 @@ in
 	hardware.bluetooth.enable = true;
 
 	# Load NVIDIA proprietary drivers
-	hardware.nvidia = {
-		open = false;
-		modesetting.enable = true;
-		nvidiaSettings = true;
-		package = config.boot.kernelPackages.nvidiaPackages.stable;
-	};
+hardware.nvidia = {
+    open = false;                              # Use proprietary NVIDIA drivers instead of open-source nouveau
+    modesetting.enable = true;                 # Enable kernel modesetting for better Wayland compatibility
+    powerManagement.enable = true;             # Enable power management features (important for laptops)
+    powerManagement.finegrained = true;        # Enable fine-grained power management for more aggressive power saving
+    nvidiaPersistenced = true;                 # Keep GPU initialized even when no processes are using it
+    videoAcceleration = true;                  # Enable video acceleration support (VA-API, VDPAU)
+    gsp.enable = true;                         # Use GPU System Processor firmware for newer GPUs (better performance)
+    nvidiaSettings = true;                     # Install nvidia-settings GUI application
+    package = config.boot.kernelPackages.nvidiaPackages.stable; # Use the stable version of NVIDIA drivers
+};
 
 	# Hybrid GPU
 	hardware.nvidia.prime = {
 		offload.enable = true;
 		offload.enableOffloadCmd = true;
-		# sync.enable = true;
 		amdgpuBusId = "PCI:06:00:0";
 		nvidiaBusId = "PCI:01:00:0";
 	};
@@ -90,43 +94,47 @@ in
 
 	programs.zsh.enable = true;
 
+	# services.displayManager = {
+	# 	sddm.enable = true;
+	# 	sddm.wayland.enable = true;
+	# 	sddm.theme = "${pkgs.sddm-chili-theme}/share/sddm/themes/chili";
+	# }; 
+
 	xdg.portal.enable = true;
 	xdg.portal.config.common.default = "hyprland";
 	xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
 
 	environment.sessionVariables = { 
-		NIXOS_OZONE_WL = "1";
+		__NV_PRIME_RENDER_OFFLOAD = 1;
+		__NV_PRIME_RENDER_OFFLOAD_PROVIDER = "NVIDIA-G0";
+		__GLX_VENDOR_LIBRARY_NAME = "nvidia";
+		__VK_LAYER_NV_optimus = "NVIDIA_only";
+		DRI_PRIME = 1;
 	};
-
-	services.displayManager = {
-		sddm.enable = true;
-		sddm.wayland.enable = true;
-		sddm.theme = "${pkgs.sddm-chili-theme}/share/sddm/themes/chili";
-	}; 
 
 	programs.hyprland = {
 		enable = true;
-		withUWSM = true;
 		xwayland.enable = true;
 	};
 
 	# enable greetd and auto login
-	# services.greetd.enable = true;
-	# services.greetd.settings = {
-	# 	default_session = {
-	# 		command = "${pkgs.greetd.greetd}/bin/agreety --cmd ${pkgs.bashInteractive}/bin/bash";
-	# 		user = "${user}";
-	# 	};
-	# 	initial_session = {
-	# 		command = "${pkgs.hyprland}/bin/Hyprland";
-	# 		user = "${user}";
-	# 	};
-	# };
+	services.greetd.enable = true;
+	services.greetd.settings = {
+		default_session = {
+			command = "${pkgs.greetd.greetd}/bin/agreety --cmd ${pkgs.bashInteractive}/bin/bash";
+			user = "${user}";
+		};
+		initial_session = {
+			command = "${pkgs.hyprland}/bin/Hyprland";
+			user = "${user}";
+		};
+	};
 
 	# xorg
 	services.xserver.enable = true;
 	services.xserver.autorun = false;
-	# services.xserver.displayManager.startx.enable = true;
+	services.xserver.displayManager.startx.enable = true;
+
 	# services.xserver.windowManager.dwm = {
 	# 	enable = true;
 	# 	package = pkgs.dwm.overrideAttrs (old: {
@@ -135,17 +143,16 @@ in
 	# 	});
 	# };
 
-	# services.xserver.windowManager.bspwm.enable = true;
-	# services.xserver.videoDrivers = [ 
-	# 	"nvidia"
-	# 	# "amdgpu"
-	# ];
+	services.xserver.windowManager.bspwm.enable = true;
+	services.xserver.videoDrivers = [ 
+		"nvidia"
+		"amdgpu"
+	];
 
 	# Configure keymap in X11
-	# services.xserver.xkb = {
-	# 	layout = "us";
-	# 	variant = "";
-	# };
+	services.xserver.xkb = {
+		layout = "us";
+	};
 
 	# Enable sound with pipewire.
 	services.pulseaudio.enable = false;
@@ -198,6 +205,7 @@ in
 	fonts.packages = with pkgs; [
 		comic-mono
 		jetbrains-mono
+		meslo-lg
 		nerd-fonts.comic-shanns-mono
 		nerd-fonts.jetbrains-mono
 		nerd-fonts.meslo-lg
@@ -220,6 +228,7 @@ in
 		nbfc-linux
 		neovim
 		polkit_gnome
+		# cudaPackages.cudatoolkit
 		unzip
 		wget
 		zip
