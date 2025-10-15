@@ -2,7 +2,7 @@
 let
 	user = "sachin";
 in
-{
+	{
 	imports = [
 		/etc/nixos/hardware-configuration.nix
 	];
@@ -11,7 +11,8 @@ in
 	boot.loader.systemd-boot.enable = true;
 	boot.loader.efi.canTouchEfiVariables = true;
 	boot.loader.systemd-boot.configurationLimit = 7;
-	boot.kernelPackages = pkgs.linuxPackages_zen;
+	boot.kernelPackages = pkgs.linuxPackages_6_16;
+	# boot.kernelPackages = pkgs.linuxPackages_zen;
 
 	# CPU & GPU Drivers
 	hardware.cpu.amd.updateMicrocode = true;
@@ -22,17 +23,17 @@ in
 	hardware.bluetooth.enable = true;
 
 	# Load NVIDIA proprietary drivers
-hardware.nvidia = {
-    open = false;                              # Use proprietary NVIDIA drivers instead of open-source nouveau
-    modesetting.enable = true;                 # Enable kernel modesetting for better Wayland compatibility
-    powerManagement.enable = true;             # Enable power management features (important for laptops)
-    powerManagement.finegrained = true;        # Enable fine-grained power management for more aggressive power saving
-    nvidiaPersistenced = true;                 # Keep GPU initialized even when no processes are using it
-    videoAcceleration = true;                  # Enable video acceleration support (VA-API, VDPAU)
-    gsp.enable = true;                         # Use GPU System Processor firmware for newer GPUs (better performance)
-    nvidiaSettings = true;                     # Install nvidia-settings GUI application
-    package = config.boot.kernelPackages.nvidiaPackages.stable; # Use the stable version of NVIDIA drivers
-};
+	hardware.nvidia = {
+		open = false;                              # Use proprietary NVIDIA drivers instead of open-source nouveau
+		modesetting.enable = true;                 # Enable kernel modesetting for better Wayland compatibility
+		powerManagement.enable = true;             # Enable power management features (important for laptops)
+		powerManagement.finegrained = true;        # Enable fine-grained power management for more aggressive power saving
+		nvidiaPersistenced = true;                 # Keep GPU initialized even when no processes are using it
+		videoAcceleration = true;                  # Enable video acceleration support (VA-API, VDPAU)
+		gsp.enable = true;                         # Use GPU System Processor firmware for newer GPUs (better performance)
+		nvidiaSettings = true;                     # Install nvidia-settings GUI application
+		package = config.boot.kernelPackages.nvidiaPackages.stable; # Use the stable version of NVIDIA drivers
+	};
 
 	# Hybrid GPU
 	hardware.nvidia.prime = {
@@ -64,6 +65,8 @@ hardware.nvidia = {
 	networking.networkmanager.enable = true;
 	networking.networkmanager.wifi.powersave = true;
 	networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
+	# networking.extraHosts = ''
+	# '';
 
 	# Set your time zone.
 	time.timeZone = "Asia/Kolkata";
@@ -195,6 +198,9 @@ hardware.nvidia = {
 	programs.appimage.enable = true;
 	programs.appimage.binfmt = true;
 
+	#
+	programs.obs-studio.enableVirtualCamera = true;
+
 	# Allow unfree packages
 	nixpkgs.config.allowUnfree = true;
 
@@ -218,6 +224,7 @@ hardware.nvidia = {
 		curl
 		dconf
 		fzf
+		ffmpeg
 		gcc
 		git
 		gnumake
@@ -226,9 +233,9 @@ hardware.nvidia = {
 		libsForQt5.qt5.qtgraphicaleffects
 		libsForQt5.qt5.qtquickcontrols
 		nbfc-linux
+		nwg-hello
 		neovim
 		polkit_gnome
-		# cudaPackages.cudatoolkit
 		unzip
 		wget
 		zip
@@ -252,6 +259,9 @@ hardware.nvidia = {
 
 	# Tailscale
 	services.tailscale.enable = true;
+
+	# Bluetoot
+	services.blueman.enable = true;
 
 	# Enable touchpad support (enabled default in most desktopManager).
 	services.libinput.enable = true;

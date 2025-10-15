@@ -5,21 +5,18 @@ let
 	create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
 	configs = {
 		alacritty = "alacritty";
-		bspwm = "bspwm";
-		chadwm = "chadwm";
-		dunst = "dunst";
 		hypr = "hypr";
 		kitty = "kitty";
+		foot = "foot";
+		mako = "mako";
 		mpd = "mpd";
 		mpv = "mpv";
 		nbfc = "nbfc";
 		ncmpcpp = "ncmpcpp";
 		nvim = "nvim";
 		picom = "picom";
-		polybar = "polybar";
 		qutebrowser = "qutebrowser";
 		rofi = "rofi";
-		sxhkd = "sxhkd";
 		sxiv = "sxiv";
 		tmux = "tmux";
 		waybar = "waybar";
@@ -52,7 +49,7 @@ in
 		gtk.enable = true;
 		x11.enable = true;
 		package = pkgs.bibata-cursors;
-		name = "Bibata-Modern-Amber";
+		name = "Bibata-Modern-Ice";
 		size = 10;
 	};
 
@@ -65,9 +62,11 @@ in
 			wlrobs
 			obs-backgroundremoval
 			obs-pipewire-audio-capture
-			obs-vaapi #optional AMD hardware acceleration
+			obs-vaapi
 			obs-gstreamer
 			obs-vkcapture
+			waveform
+			droidcam-obs
 		];
 	};
 
@@ -81,18 +80,18 @@ in
 
 	gtk = {
 		enable = true;
-		theme.package = pkgs.flat-remix-gtk;
-		theme.name = "Flat-Remix-GTK-Grey-Darkest";
+		theme.package = pkgs.dracula-theme;
+		theme.name = "Dracula";
 
 		iconTheme.package = pkgs.papirus-icon-theme;
-		iconTheme.name = "Papirus";
+		iconTheme.name = "Papirus-Dark";
 		font.name = "ShureTechMono Nerd Font Mono";
 		font.size = 11;
 	};
 
 	qt = {
 		enable = true;
-		platformTheme = "qtct";
+		platformTheme.name = "qtct";
 		style = {
 			package = pkgs.rose-pine-kvantum;
 			name = "kvantum";
@@ -109,33 +108,51 @@ in
 		".zshrc".source = create_symlink "${dotfiles}/zsh/zshrc";
 		".xinitrc".source = create_symlink "${dotfiles}/xorg/xinitrc";
 		".config/user-dirs.dirs".source = create_symlink "${dotfiles}/xdg/user-dirs.dirs";
+		".local/scripts".source = create_symlink "${dotfiles}/scripts";
+	};
+
+	services.ollama = {
+		enable = true;
+		host = "[::]";
+		acceleration = "cuda";
 	};
 
 	# install packages
 	home.packages = with pkgs; [
 		acpi
 		alacritty
+		audacity
+		brave
 		brightnessctl
 		bun
 		cobra-cli
 		code-cursor
 		dash
-		dunst
 		fastfetch
+		foot
 		gimp3
 		go
-		gopls
+		gowall
+		gum
 		gparted
+		hyprshot
+		imagemagick
 		inputs.zen-browser.packages.${pkgs.system}.default
 		kitty
-		lazygit
 		lazydocker
+		lazygit
 		lazyjournal
 		libsForQt5.qt5ct
 		libsForQt5.qtstyleplugin-kvantum
+		lua53Packages.luarocks
+		love
+		lua
+		mako
 		mpc
 		mpd
 		mpv
+		nats-top
+		natscli
 		nautilus
 		ncmpcpp
 		networkmanagerapplet
@@ -144,6 +161,8 @@ in
 		nodejs
 		nvtopPackages.full
 		nwg-displays
+		nwg-look
+		obsidian
 		pcmanfm
 		pnpm
 		pulsemixer
@@ -158,9 +177,13 @@ in
 		tmux
 		todoist
 		vscode
+		wails
 		waybar
+		whisper-cpp
 		wlr-randr
 		yarn
+		yt-dlp
+		ytfzf
 		zed-editor
 	];
 
