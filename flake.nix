@@ -10,33 +10,33 @@
 
 	outputs = { self, nixpkgs, home-manager, zen-browser, ... } @ inputs:
 
-	let
-		system = "x86_64-linux";
-		pkgs = nixpkgs.legacyPackages.${system};
-	in {
+		let
+			system = "x86_64-linux";
+			# pkgs = nixpkgs.legacyPackages.${system};
+		in {
 
-		# Nixos system config
-		nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-			inherit system;
-			specialArgs = { inherit inputs; };
-			modules = [ 
-				./configuration.nix
-				home-manager.nixosModules.home-manager {
-					home-manager.useGlobalPkgs = true;
-					home-manager.useUserPackages = true;
-					home-manager.users.sachin = import ./home.nix;
-					home-manager.backupFileExtension = "backup";
-					home-manager.extraSpecialArgs = { inherit inputs;  };
-				}
-			];
+			# Nixos system config
+			nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+				inherit system;
+				specialArgs = { inherit inputs; };
+				modules = [ 
+					./configuration.nix
+					home-manager.nixosModules.home-manager {
+						home-manager.useGlobalPkgs = true;
+						home-manager.useUserPackages = true;
+						home-manager.users.sachin = import ./home.nix;
+						home-manager.backupFileExtension = "backup";
+						home-manager.extraSpecialArgs = { inherit inputs;  };
+					}
+				];
+			};
+
+			# Home Manager config
+			# homeConfigurations.sachin = home-manager.lib.homeManagerConfiguration {
+			# 	inherit pkgs;
+			# 	modules = [ ./home.nix ];
+			# 	extraSpecialArgs = { inherit inputs; };
+			# };
+
 		};
-
-		# Home Manager config
-		# homeConfigurations.sachin = home-manager.lib.homeManagerConfiguration {
-		# 	inherit pkgs;
-		# 	modules = [ ./home.nix ];
-		# 	extraSpecialArgs = { inherit inputs; };
-		# };
-
-	};
 }

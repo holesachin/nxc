@@ -92,16 +92,9 @@ in
 		description = "my nixos!";
 		extraGroups = [ "networkmanager" "wheel" "docker" ];
 		shell = pkgs.zsh;
-		packages = with pkgs; [];
 	};
 
 	programs.zsh.enable = true;
-
-	# services.displayManager = {
-	# 	sddm.enable = true;
-	# 	sddm.wayland.enable = true;
-	# 	sddm.theme = "${pkgs.sddm-chili-theme}/share/sddm/themes/chili";
-	# }; 
 
 	xdg.portal.enable = true;
 	xdg.portal.config.common.default = "hyprland";
@@ -136,17 +129,6 @@ in
 	# xorg
 	services.xserver.enable = true;
 	services.xserver.autorun = false;
-	services.xserver.displayManager.startx.enable = true;
-
-	# services.xserver.windowManager.dwm = {
-	# 	enable = true;
-	# 	package = pkgs.dwm.overrideAttrs (old: {
-	# 		src = /home/${user}/dotfiles/dwm; # replace dwm with chadwm if you want
-	# 		buildInputs = (old.buildInputs or []) ++ [ pkgs.imlib2 ];
-	# 	});
-	# };
-
-	services.xserver.windowManager.bspwm.enable = true;
 	services.xserver.videoDrivers = [ 
 		"nvidia"
 		"amdgpu"
@@ -180,19 +162,6 @@ in
 
 	# Polkit
 	security.polkit.enable = true;
-	systemd.user.services.polkit-gnome-authentication-agent-1 = {
-		description = "polkit-gnome-authentication-agent-1";
-		wantedBy = [ "graphical-session.target" ];
-		wants = [ "graphical-session.target" ];
-		after = [ "graphical-session.target" ];
-		serviceConfig = {
-			Type = "simple";
-			ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-			Restart = "on-failure";
-			RestartSec = 1;
-			TimeoutStopSec = 10;
-		};
-	};
 
 	# Enable Appimage Support
 	programs.appimage.enable = true;
@@ -221,21 +190,21 @@ in
 
 	# List packages installed in system profile. To search, run:
 	environment.systemPackages = with pkgs; [
+		cmd-polkit
 		curl
 		dconf
-		fzf
 		ffmpeg
+		fzf
 		gcc
 		git
 		gnumake
-		greetd.qtgreet
 		htop
+		hyprlock
+		jq
 		libsForQt5.qt5.qtgraphicaleffects
 		libsForQt5.qt5.qtquickcontrols
 		nbfc-linux
-		nwg-hello
 		neovim
-		polkit_gnome
 		unzip
 		wget
 		zip

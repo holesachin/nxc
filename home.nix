@@ -121,7 +121,9 @@ in
 	home.packages = with pkgs; [
 		acpi
 		alacritty
+		arduino-ide
 		audacity
+		bitwarden-cli
 		brave
 		brightnessctl
 		bun
@@ -133,9 +135,10 @@ in
 		gimp3
 		go
 		gowall
-		gum
 		gparted
 		hyprshot
+		hyprpaper
+		imagemagick
 		imagemagick
 		inputs.zen-browser.packages.${pkgs.system}.default
 		kitty
@@ -144,9 +147,9 @@ in
 		lazyjournal
 		libsForQt5.qt5ct
 		libsForQt5.qtstyleplugin-kvantum
-		lua53Packages.luarocks
 		love
 		lua
+		lua53Packages.luarocks
 		mako
 		mpc
 		mpd
@@ -171,9 +174,11 @@ in
 		rclone
 		ripgrep
 		rofi-wayland
+		scrcpy
 		sqlc
 		swaybg
 		sxiv
+		tmate
 		tmux
 		todoist
 		vscode
