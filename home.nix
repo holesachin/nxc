@@ -18,6 +18,7 @@ let
 		qutebrowser = "qutebrowser";
 		rofi = "rofi";
 		sxiv = "sxiv";
+		lf = "lf";
 		tmux = "tmux";
 		waybar = "waybar";
 	};
@@ -121,8 +122,10 @@ in
 	home.packages = with pkgs; [
 		acpi
 		alacritty
+		arduino-cli
 		arduino-ide
 		audacity
+		android-studio
 		bitwarden-cli
 		brave
 		brightnessctl
@@ -145,6 +148,7 @@ in
 		lazydocker
 		lazygit
 		lazyjournal
+		lf
 		libsForQt5.qt5ct
 		libsForQt5.qtstyleplugin-kvantum
 		love
@@ -154,6 +158,7 @@ in
 		mpc
 		mpd
 		mpv
+		trash-cli
 		nats-top
 		natscli
 		nautilus

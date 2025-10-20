@@ -7,12 +7,18 @@ in
 		/etc/nixos/hardware-configuration.nix
 	];
 
-	# Bootloader.
-	boot.loader.systemd-boot.enable = true;
-	boot.loader.efi.canTouchEfiVariables = true;
-	boot.loader.systemd-boot.configurationLimit = 7;
+	# Kernel
 	boot.kernelPackages = pkgs.linuxPackages_6_16;
 	# boot.kernelPackages = pkgs.linuxPackages_zen;
+
+	# Bootloader.
+	boot.loader.efi.canTouchEfiVariables = true;
+	boot.loader.grub = {
+		enable = true;
+		efiSupport = true;
+		device = "nodev";
+		useOSProber = true;
+	};
 
 	# CPU & GPU Drivers
 	hardware.cpu.amd.updateMicrocode = true;
