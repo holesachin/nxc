@@ -18,6 +18,7 @@ in
 		efiSupport = true;
 		device = "nodev";
 		useOSProber = true;
+		theme = "${pkgs.minimal-grub-theme}";
 	};
 
 	# CPU & GPU Drivers
@@ -114,10 +115,14 @@ in
 		DRI_PRIME = 1;
 	};
 
+	# enable hyprland
 	programs.hyprland = {
 		enable = true;
 		xwayland.enable = true;
 	};
+
+	# enable niri
+	programs.niri.enable = true;
 
 	# enable greetd and auto login
 	services.greetd.enable = true;
@@ -127,6 +132,7 @@ in
 			user = "${user}";
 		};
 		initial_session = {
+			# command = "${pkgs.niri}/bin/niri";
 			command = "${pkgs.hyprland}/bin/Hyprland";
 			user = "${user}";
 		};
@@ -158,13 +164,6 @@ in
 
 	# Docker
 	virtualisation.docker.enable = true;
-	virtualisation.docker.rootless = {
-		enable = true;
-		setSocketVariable = true;
-	};
-
-	# Install Programs
-	programs.firefox.enable = true;
 
 	# Polkit
 	security.polkit.enable = true;
@@ -172,9 +171,6 @@ in
 	# Enable Appimage Support
 	programs.appimage.enable = true;
 	programs.appimage.binfmt = true;
-
-	#
-	programs.obs-studio.enableVirtualCamera = true;
 
 	# Allow unfree packages
 	nixpkgs.config.allowUnfree = true;
@@ -209,6 +205,7 @@ in
 		jq
 		libsForQt5.qt5.qtgraphicaleffects
 		libsForQt5.qt5.qtquickcontrols
+		minimal-grub-theme
 		nbfc-linux
 		neovim
 		unzip

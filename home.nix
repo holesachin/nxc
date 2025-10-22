@@ -122,36 +122,35 @@ in
 	home.packages = with pkgs; [
 		acpi
 		alacritty
+		aria2
 		arduino-cli
 		arduino-ide
 		audacity
 		android-studio
+		bat
 		bitwarden-cli
 		brave
+		firefox
 		brightnessctl
 		bun
 		cobra-cli
-		code-cursor
 		dash
 		fastfetch
-		foot
 		gimp3
+		ghostty
 		go
-		gowall
+		glow 
+		gum
 		gparted
 		hyprshot
-		hyprpaper
-		imagemagick
 		imagemagick
 		inputs.zen-browser.packages.${pkgs.system}.default
 		kitty
 		lazydocker
 		lazygit
-		lazyjournal
 		lf
 		libsForQt5.qt5ct
 		libsForQt5.qtstyleplugin-kvantum
-		love
 		lua
 		lua53Packages.luarocks
 		mako
@@ -181,7 +180,7 @@ in
 		rofi-wayland
 		scrcpy
 		sqlc
-		swaybg
+		swww
 		sxiv
 		tmate
 		tmux
@@ -189,7 +188,6 @@ in
 		vscode
 		wails
 		waybar
-		whisper-cpp
 		wlr-randr
 		yarn
 		yt-dlp
